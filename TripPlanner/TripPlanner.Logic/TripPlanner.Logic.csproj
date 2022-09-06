@@ -1,9 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TripPlanner.Context\TripPlanner.Context.csproj" />
+    <ProjectReference Include="..\TripPlanner.DatabaseModels\TripPlanner.DatabaseModels.csproj" />
+  </ItemGroup>
 
 </Project>
