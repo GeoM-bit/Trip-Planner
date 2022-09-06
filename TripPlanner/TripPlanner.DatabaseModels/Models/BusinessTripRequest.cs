@@ -51,10 +51,10 @@ namespace TripPlanner.DatabaseModels.Models
 		public string? AdditionalInfo { get; set; }
 
 		[Required]
-		public DateTime StartDate { get; set; }
+		public DateTimeOffset StartDate { get; set; }
 
 		[Required]
-		public DateTime EndDate { get; set; }
+		public DateTimeOffset EndDate { get; set; }
 
 		[Required]
 		public RequestStatus Status { get; set; }
