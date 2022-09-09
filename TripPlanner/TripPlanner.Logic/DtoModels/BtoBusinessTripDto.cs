@@ -2,7 +2,7 @@
 
 namespace TripPlanner.Logic.DtoModels
 {
-    public class BtoBusinessTripDto : BaseDto
+    public class BtoBusinessTripDto : BusinessTripBaseDto
 	{
 		public string FirstName { get; set; }
 

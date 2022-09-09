@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TripPlanner.Context;
 using TripPlanner.DatabaseModels.Models;
+using TripPlanner.Logic.Exceptions;
 
 namespace TripPlanner.Logic.Repositories
 {
@@ -31,22 +32,22 @@ namespace TripPlanner.Logic.Repositories
         public async Task<bool> UpdateTrip(Guid id, BusinessTripRequest trip)
         {
             var tripFromDb = await _context.BusinessTripRequests.FirstOrDefaultAsync(x => x.Id == id);
-            if (tripFromDb != null)
-            {
-                tripFromDb.Area = trip.Area;
-                tripFromDb.ProjectNumber = trip.ProjectNumber;
-                tripFromDb.TaskNumber = trip.TaskNumber;
-                tripFromDb.PmName = trip.PmName;
-                tripFromDb.Accomodation = trip.Accomodation;
-                tripFromDb.TaskName = trip.TaskName;
-                tripFromDb.AdditionalInfo = trip.AdditionalInfo;
-                tripFromDb.Card = trip.Card;
-                tripFromDb.Client = trip.Client;
-                tripFromDb.ClientLocation = trip.ClientLocation;
-                tripFromDb.StartDate = trip.StartDate;
-                tripFromDb.EndDate = tripFromDb.EndDate;
-                _context.BusinessTripRequests.Update(tripFromDb);
-            }
+            if (tripFromDb == null)
+                throw new EntityNotFoundException("The Business Trip to be updated does not exist!");
+
+            tripFromDb.Area = trip.Area;
+            tripFromDb.ProjectNumber = trip.ProjectNumber;
+            tripFromDb.TaskNumber = trip.TaskNumber;
+            tripFromDb.PmName = trip.PmName;
+            tripFromDb.Accomodation = trip.Accomodation;
+            tripFromDb.TaskName = trip.TaskName;
+            tripFromDb.AdditionalInfo = trip.AdditionalInfo;
+            tripFromDb.Card = trip.Card;
+            tripFromDb.Client = trip.Client;
+            tripFromDb.ClientLocation = trip.ClientLocation;
+            tripFromDb.StartDate = trip.StartDate;
+            tripFromDb.EndDate = tripFromDb.EndDate;
+            _context.BusinessTripRequests.Update(tripFromDb);
             var result = await _context.SaveChangesAsync();
 
             if (result > 0)
@@ -57,8 +58,10 @@ namespace TripPlanner.Logic.Repositories
         public async Task<bool> DeleteTrip(Guid id)
         {
             var tripFromDb = await _context.BusinessTripRequests.FirstOrDefaultAsync(x=>x.Id==id);
-            if(tripFromDb != null)
-                _context.BusinessTripRequests.Remove(tripFromDb);
+            if(tripFromDb == null)
+                throw new EntityNotFoundException("The Business Trip to be deleted does not exist!");
+
+            _context.BusinessTripRequests.Remove(tripFromDb);
             var result = await _context.SaveChangesAsync();
 
             if (result > 0)

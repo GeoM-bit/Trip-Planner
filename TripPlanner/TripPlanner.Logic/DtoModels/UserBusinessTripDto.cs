@@ -2,7 +2,7 @@
 
 namespace TripPlanner.Logic.DtoModels
 {
-    public class UserBusinessTripDto : BaseDto 
+    public class UserBusinessTripDto : BusinessTripBaseDto 
 	{
 		public RequestStatus Status { get; set; }
 	}

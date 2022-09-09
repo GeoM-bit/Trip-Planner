@@ -1,6 +1,6 @@
 ﻿namespace TripPlanner.Logic.DtoModels
 {
-    public class BaseDto
+    public class BusinessTripBaseDto
     {
         public Guid Id { get; set; }
 
