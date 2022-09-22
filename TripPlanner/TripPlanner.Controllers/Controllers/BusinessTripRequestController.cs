@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TripPlanner.DatabaseModels.Models;
+using TripPlanner.Logic.Common;
 using TripPlanner.Logic.DtoModels;
 using TripPlanner.Logic.Repositories;
 
 namespace TripPlanner.Controllers.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class BusinessTripRequestController : ControllerBase
@@ -19,12 +21,33 @@ namespace TripPlanner.Controllers.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-
-        [Authorize]
+       
         [HttpGet]
         public async Task<IEnumerable<BtoBusinessTripDto>> Get()
         {
             var trips = await _repository.GetAllTrips();
+            var tripsDto = _mapper.Map<List<BtoBusinessTripDto>>(trips);
+
+            return tripsDto;
+        }
+
+        [Authorize(Roles = "User")]
+        [Route("TripsForUser")]
+        [HttpGet]
+        public async Task<IEnumerable<UserBusinessTripDto>> GetTripsForUser([FromQuery]string email, [FromQuery]SearchCriteria searchCriteria)
+        {
+            var trips = await _repository.GetAllTripsForUserByCriteria(email, searchCriteria);
+            var tripsDto = _mapper.Map<List<UserBusinessTripDto>>(trips);
+
+            return tripsDto;
+        }
+
+        [Authorize(Roles = "BTO")]
+        [Route("TripsForBto")]
+        [HttpGet]
+        public async Task<IEnumerable<BtoBusinessTripDto>> GetTripsForBto([FromQuery] SearchCriteria searchCriteria)
+        {
+            var trips = await _repository.GetPendingRequestsByCriteria(searchCriteria);
             var tripsDto = _mapper.Map<List<BtoBusinessTripDto>>(trips);
 
             return tripsDto;
