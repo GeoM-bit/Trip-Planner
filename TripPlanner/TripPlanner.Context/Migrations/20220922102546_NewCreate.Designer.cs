@@ -12,7 +12,7 @@ using TripPlanner.Context;
 namespace TripPlanner.Context.Migrations
 {
     [DbContext(typeof(TripPlannerContext))]
-    [Migration("20220921072436_NewCreate")]
+    [Migration("20220922102546_NewCreate")]
     partial class NewCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,7 +133,7 @@ namespace TripPlanner.Context.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Accomodation")
+                    b.Property<string>("Accommodation")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");

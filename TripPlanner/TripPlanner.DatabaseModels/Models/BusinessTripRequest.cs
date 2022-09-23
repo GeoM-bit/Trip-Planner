@@ -45,7 +45,7 @@ namespace TripPlanner.DatabaseModels.Models
 		public string MeanOfTransport { get; set; }
 
 		[Required, MaxLength(50)]
-		public string Accomodation { get; set; }
+		public string Accommodation { get; set; }
 
 		[MaxLength(250)]
 		public string? AdditionalInfo { get; set; }

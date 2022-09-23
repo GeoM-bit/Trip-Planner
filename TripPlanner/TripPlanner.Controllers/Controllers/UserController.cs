@@ -61,5 +61,13 @@ namespace TripPlanner.Controllers.Controllers
             else
                 return false;
         }
+
+        [Route("logout")]
+        [Authorize(Roles = "User, BTO")]
+        [HttpPost]
+        public async Task Logout()
+        {
+            await _repository.Logout();
+        }
     }
 }

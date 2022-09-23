@@ -7,6 +7,7 @@ using TripPlanner.Logic.Repositories;
 
 namespace TripPlanner.Controllers.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class BusinessTripRequestController : ControllerBase
@@ -19,8 +20,7 @@ namespace TripPlanner.Controllers.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-
-        [Authorize]
+       
         [HttpGet]
         public async Task<IEnumerable<BtoBusinessTripDto>> Get()
         {

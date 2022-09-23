@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TripPlanner.DatabaseModels.Models;
-using TripPlanner.Logic.DtoModels;
 
 namespace TripPlanner.Logic.Repositories
 {
@@ -38,5 +37,9 @@ namespace TripPlanner.Logic.Repositories
             return isUserRegistered && isUserAssignedRole;
         }
 
+        public async Task Logout()
+        {
+            await _signInManager.SignOutAsync();
+        }
     }
 }

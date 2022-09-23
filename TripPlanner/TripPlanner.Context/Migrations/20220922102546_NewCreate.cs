@@ -68,7 +68,7 @@ namespace TripPlanner.Context.Migrations
                     Phone = table.Column<bool>(type: "bit", nullable: false),
                     Card = table.Column<bool>(type: "bit", nullable: false),
                     MeanOfTransport = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Accomodation = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Accommodation = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     AdditionalInfo = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
                     StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
