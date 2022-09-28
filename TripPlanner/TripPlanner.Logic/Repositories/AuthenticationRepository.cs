@@ -19,8 +19,6 @@ namespace TripPlanner.Logic.Repositories
         private readonly TripPlannerContext _context;
         private readonly IConfiguration _config;
         private readonly ITokenService _tokenService;
-        private string generatedToken = null;
-
 
         public AuthenticationRepository(UserManager<User> userManager, SignInManager<User> signInManager, TripPlannerContext context, IConfiguration config, ITokenService tokenService)
         {
@@ -31,35 +29,35 @@ namespace TripPlanner.Logic.Repositories
             _tokenService = tokenService;
         }
 
-        public async Task<bool> Login(LoginDto loginUser)
+        public async Task<string> Login(LoginDto loginUser)
         {
             var registeredUser = await _userManager.FindByEmailAsync(loginUser.Email);
             if (registeredUser == null)
             {
-                return false;
+                return null;
             }
             var loginResult = await _signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true);
 
             if (loginResult.Succeeded)
             {
                 string role = GetRole(loginUser.Email).Result;
-                generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), loginUser, role);
+                string generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), loginUser, role);
                 if (generatedToken != null)
                 {
                     TokenDto tokenDto = new() { Token = generatedToken };
-                    return true;
+                    return tokenDto.Token;
                 }
                 else
-                    return false;
+                    return null;
             }
             else
-                return false;
+                return null;
         }
 
         public async Task<bool> Register(User user)
         {
             var isUserRegistered = (await _userManager.CreateAsync(user, user.PasswordHash)).Succeeded;
-            var isUserAssignedRole = (await _userManager.AddToRoleAsync(user, "User")).Succeeded;
+            var isUserAssignedRole = (await _userManager.AddToRoleAsync(user, Roles.User.ToString())).Succeeded;
             return isUserRegistered && isUserAssignedRole;
         }
 
@@ -78,9 +76,9 @@ namespace TripPlanner.Logic.Repositories
                 if (userRoleId != Guid.NewGuid())
                 {
                     if (userRoleId == Constants.UserRoleId)
-                        result = RoleNames.User.ToString();
+                        result = Roles.User.ToString();
                     else if (userRoleId == Constants.BtoRoleId)
-                        result = RoleNames.BTO.ToString();
+                        result = Roles.BTO.ToString();
                 }
                 else
                     throw new EntityNotFoundException($"The UserRole for {email} was not found!");

@@ -6,7 +6,7 @@ namespace TripPlanner.Logic.Repositories
     public interface IAuthenticationRepository
     {
         Task<bool> Register(User user);
-        Task<bool> Login(LoginDto loginUser);
+        Task<string> Login(LoginDto loginUser);
         Task Logout();
         Task<string> GetRole(string email);
     }

@@ -1,6 +1,6 @@
 ﻿namespace TripPlanner.Logic.Common.Enums
 {
-    public enum RoleNames
+    public enum Roles
     {
         User,
         BTO

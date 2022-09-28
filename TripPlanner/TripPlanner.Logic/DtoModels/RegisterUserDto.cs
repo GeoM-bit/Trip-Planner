@@ -20,8 +20,6 @@ namespace TripPlanner.Logic.DtoModels
 		[MaxLength(80, ErrorMessage = "Maximum length of this field is 80 characters.")]
 		public string Email { get; set; }
 
-		public string UserName { get; set; }
-
 		[Required(ErrorMessage = "Password is required.")]
 		[DataType(DataType.Password)]
 		[MinLength(10, ErrorMessage = "Password must have at least 10 characters.")]

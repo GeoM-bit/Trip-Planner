@@ -32,7 +32,7 @@ namespace TripPlanner.Controllers.Controllers
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
-        public async Task<bool> Login(LoginDto loginUser)
+        public async Task<string> Login(LoginDto loginUser)
         {
             return await _repository.Login(loginUser);
            
