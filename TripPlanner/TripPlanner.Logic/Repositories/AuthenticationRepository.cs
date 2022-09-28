@@ -1,5 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using TripPlanner.Context;
 using TripPlanner.DatabaseModels.Models;
+using TripPlanner.Logic.Common;
+using TripPlanner.Logic.Common.Enums;
+using TripPlanner.Logic.DtoModels;
+using TripPlanner.Logic.Exceptions;
+using TripPlanner.Logic.Services;
 
 namespace TripPlanner.Logic.Repositories
 {
@@ -7,32 +16,49 @@ namespace TripPlanner.Logic.Repositories
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly TripPlannerContext _context;
+        private readonly IConfiguration _config;
+        private readonly ITokenService _tokenService;
+        private string generatedToken = null;
 
-        public AuthenticationRepository(UserManager<User> userManager, SignInManager<User> signInManager)
+
+        public AuthenticationRepository(UserManager<User> userManager, SignInManager<User> signInManager, TripPlannerContext context, IConfiguration config, ITokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
+            _config = config;
+            _tokenService = tokenService;
         }
 
-        public async Task<bool> Login(User user, string password)
+        public async Task<bool> Login(LoginDto loginUser)
         {
-            var registeredUser = await _userManager.FindByEmailAsync(user.Email);
+            var registeredUser = await _userManager.FindByEmailAsync(loginUser.Email);
             if (registeredUser == null)
             {
                 return false;
             }
-            var loginResult = await _signInManager.PasswordSignInAsync(registeredUser.UserName, password, false, true);
+            var loginResult = await _signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true);
 
-            if (!loginResult.Succeeded)
+            if (loginResult.Succeeded)
             {
-                return false;
+                string role = GetRole(loginUser.Email).Result;
+                generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), loginUser, role);
+                if (generatedToken != null)
+                {
+                    TokenDto tokenDto = new() { Token = generatedToken };
+                    return true;
+                }
+                else
+                    return false;
             }
-            return true;
+            else
+                return false;
         }
 
-        public async Task<bool> Register(User user, string password)
+        public async Task<bool> Register(User user)
         {
-            var isUserRegistered = (await _userManager.CreateAsync(user, password)).Succeeded;
+            var isUserRegistered = (await _userManager.CreateAsync(user, user.PasswordHash)).Succeeded;
             var isUserAssignedRole = (await _userManager.AddToRoleAsync(user, "User")).Succeeded;
             return isUserRegistered && isUserAssignedRole;
         }
@@ -40,6 +66,29 @@ namespace TripPlanner.Logic.Repositories
         public async Task Logout()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        public async Task<string> GetRole(string email)
+        {
+            string result = "";
+            var userId = await _context.Users.Where(x=>x.Email==email).Select(x => x.Id).FirstOrDefaultAsync();
+            if (userId != Guid.NewGuid())
+            {
+                var userRoleId = await _context.UserRoles.Where(x=>x.UserId==userId).Select(x=>x.RoleId).FirstOrDefaultAsync();
+                if (userRoleId != Guid.NewGuid())
+                {
+                    if (userRoleId == Constants.UserRoleId)
+                        result = RoleNames.User.ToString();
+                    else if (userRoleId == Constants.BtoRoleId)
+                        result = RoleNames.BTO.ToString();
+                }
+                else
+                    throw new EntityNotFoundException($"The UserRole for {email} was not found!");
+            }
+            else
+                throw new EntityNotFoundException($"The user with the email {email} was not found!");
+
+            return result;
         }
     }
 }

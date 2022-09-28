@@ -1,13 +1,14 @@
-﻿namespace TripPlanner.DatabaseModels.Models.Enums;
-
-public enum AreaType
+﻿namespace TripPlanner.DatabaseModels.Models.Enums
 {
-	Web,
-	Automotive,
-	Qa,
-	MachineLearning,
-	DevOps,
-	Gaming,
-	Project,
-	Hr,
+	public enum AreaType
+	{
+		Web,
+		Automotive,
+		Qa,
+		MachineLearning,
+		DevOps,
+		Gaming,
+		Project,
+		Hr,
+	}
 }

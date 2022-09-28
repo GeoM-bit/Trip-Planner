@@ -13,7 +13,5 @@ namespace TripPlanner.Logic.DtoModels
 		[DataType(DataType.Password)]
 		[MaxLength(50, ErrorMessage = "Maximum length of this field is 50 characters.")]
 		public string? Password { get; set; }
-
-		public string Role { get; set; }
 	}
 }

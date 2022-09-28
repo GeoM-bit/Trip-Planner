@@ -10,14 +10,14 @@ namespace TripPlanner.Logic.Services
     {
         private const double EXPIRY_DURATION_MINUTES = 30;
 
-        public string BuildToken(string key, string issuer, LoginDto user)
+        public string BuildToken(string key, string issuer, LoginDto user, string role)
         {
             var claims = new[] {
             new Claim(ClaimTypes.Name, user.Email),
-            new Claim(ClaimTypes.Role, user.Role),
+            new Claim(ClaimTypes.Role, role),
             new Claim(ClaimTypes.NameIdentifier,
             Guid.NewGuid().ToString())
-        };
+            };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -25,6 +25,7 @@ namespace TripPlanner.Logic.Services
                 expires: DateTime.Now.AddMinutes(EXPIRY_DURATION_MINUTES), signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
+
         public bool ValidateToken(string key, string issuer, string token)
         {
             var mySecret = Encoding.UTF8.GetBytes(key);
