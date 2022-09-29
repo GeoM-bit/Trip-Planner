@@ -9,8 +9,7 @@ namespace TripPlanner.Controllers.Mappers
         public UserProfile()
         {
             CreateMap<RegisterUserDto, User>()
-                .ForMember(dest=>dest.UserName, opt=>opt.MapFrom(src=>src.Email))
-                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
+                .ForMember(dest=>dest.UserName, opt=>opt.MapFrom(src=>src.Email));
             CreateMap<LoginDto, User>();
 
         }

@@ -54,9 +54,9 @@ namespace TripPlanner.Logic.Repositories
                 return null;
         }
 
-        public async Task<bool> Register(User user)
+        public async Task<bool> Register(User user, string password)
         {
-            var isUserRegistered = (await _userManager.CreateAsync(user, user.PasswordHash)).Succeeded;
+            var isUserRegistered = (await _userManager.CreateAsync(user, password)).Succeeded;
             var isUserAssignedRole = (await _userManager.AddToRoleAsync(user, Roles.User.ToString())).Succeeded;
             return isUserRegistered && isUserAssignedRole;
         }

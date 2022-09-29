@@ -23,10 +23,10 @@ namespace TripPlanner.Controllers.Controllers
         [AllowAnonymous]
         [Route("register")]
         [HttpPost]
-        public async Task<bool> Register(RegisterUserDto user)
+        public async Task<bool> Register(RegisterUserDto registerUser)
         {
-            var registerUser = _mapper.Map<User>(user);
-            return await _repository.Register(registerUser);
+            var user = _mapper.Map<User>(registerUser);
+            return await _repository.Register(user, registerUser.Password);
         }
 
         [AllowAnonymous]
