@@ -6,12 +6,12 @@ namespace TripPlanner.Logic.DtoModels
 	{
 
 		[Required(ErrorMessage = "First name is required.")]
-		[RegularExpression("^[A-Za-z]+$", ErrorMessage = "First name can contain only letters.")]
+		[RegularExpression("^[A-Za-z ]+$", ErrorMessage = "First name can contain only letters.")]
 		[MaxLength(50, ErrorMessage = "Maximum length of this field is 50 characters.")]
 		public string FirstName { get; set; }
 
 		[Required(ErrorMessage = "Last name is required.")]
-		[RegularExpression("^[A-Za-z]+$", ErrorMessage = "Last name can contain only letters.")]
+		[RegularExpression("^[A-Za-z ]+$", ErrorMessage = "Last name can contain only letters.")]
 		[MaxLength(50, ErrorMessage = "Maximum length of this field is 50 characters.")]
 		public string LastName { get; set; }
 
