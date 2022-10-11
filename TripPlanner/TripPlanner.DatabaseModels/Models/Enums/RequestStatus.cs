@@ -1,9 +1,10 @@
-﻿namespace TripPlanner.DatabaseModels.Models.Enums;
-
-public enum RequestStatus
+﻿namespace TripPlanner.DatabaseModels.Models.Enums
 {
-	Pending,
-	Accepted,
-	Rejected,
-	Cancelled,
+	public enum RequestStatus
+	{
+		Pending,
+		Accepted,
+		Rejected,
+		Cancelled,
+	}
 }

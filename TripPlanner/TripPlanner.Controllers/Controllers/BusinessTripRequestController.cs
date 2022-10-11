@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.DtoModels;
@@ -6,6 +7,7 @@ using TripPlanner.Logic.Repositories;
 
 namespace TripPlanner.Controllers.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class BusinessTripRequestController : ControllerBase
@@ -18,7 +20,7 @@ namespace TripPlanner.Controllers.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-
+       
         [HttpGet]
         public async Task<IEnumerable<BtoBusinessTripDto>> Get()
         {

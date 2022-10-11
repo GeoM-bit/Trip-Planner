@@ -6,7 +6,7 @@
 
         public string ClientLocation { get; set; }
 
-        public string Accomodation { get; set; }
+        public string Accommodation { get; set; }
 
         public string ProjectName { get; set; }
 
