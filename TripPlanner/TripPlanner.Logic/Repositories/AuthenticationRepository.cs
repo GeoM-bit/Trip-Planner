@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TripPlanner.Context;
@@ -29,7 +28,7 @@ namespace TripPlanner.Logic.Repositories
             _tokenService = tokenService;
         }
 
-        public async Task<string> Login(LoginDto loginUser)
+        public async Task<TokenDto> Login(LoginDto loginUser)
         {
             var registeredUser = await _userManager.FindByEmailAsync(loginUser.Email);
             if (registeredUser == null)
@@ -45,7 +44,7 @@ namespace TripPlanner.Logic.Repositories
                 if (generatedToken != null)
                 {
                     TokenDto tokenDto = new() { Token = generatedToken };
-                    return tokenDto.Token;
+                    return tokenDto;
                 }
                 else
                     return null;

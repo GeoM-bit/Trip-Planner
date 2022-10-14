@@ -13,9 +13,9 @@ namespace TripPlanner.Logic.Services
         public string BuildToken(string key, string issuer, LoginDto user, string role)
         {
             var claims = new[] {
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim(ClaimTypes.Role, role),
-            new Claim(ClaimTypes.NameIdentifier,
+            new Claim("name", user.Email),
+            new Claim("role", role),
+            new Claim("name-identifier",
             Guid.NewGuid().ToString())
             };
 
