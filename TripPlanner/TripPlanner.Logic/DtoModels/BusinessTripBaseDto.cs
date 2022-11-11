@@ -10,7 +10,7 @@
 
         public string ProjectName { get; set; }
 
-        public string ClientName { get; set; }
+        public string Client { get; set; }
 
         public DateTimeOffset StartDate { get; set; }
 

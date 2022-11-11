@@ -9,6 +9,6 @@
 		DevOps,
 		Gaming,
 		Project,
-		Hr,
+		Hr
 	}
 }

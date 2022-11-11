@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.Logic.Common;
 using TripPlanner.Logic.DtoModels;
 using TripPlanner.Logic.Repositories;
@@ -23,15 +24,14 @@ namespace TripPlanner.Controllers.Controllers
 
         [Authorize(Roles = "User")]
         [Route("TripsForUser")]
-        [HttpGet]
-        public async Task<IEnumerable<UserBusinessTripDto>> GetTripsForUser([FromQuery] string email, [FromQuery] SearchCriteria searchCriteria)
+        [HttpPost]
+        public async Task<IEnumerable<UserBusinessTripDto>> GetTripsForUser([FromBody] UserTripsApiModel userTripsApiModel)
         {
-            var trips = await _repository.GetAllTripsForUserByCriteria(email, searchCriteria);
+            var getTripsForUser = _mapper.Map<GetTripsForUser>(userTripsApiModel);
+            var trips = await _repository.GetAllTripsForUserByCriteria(getTripsForUser);
             var tripsDto = _mapper.Map<List<UserBusinessTripDto>>(trips);
 
             return tripsDto;
         }
-
-
     }
 }

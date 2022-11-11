@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.DtoModels;
 using TripPlanner.Logic.Repositories;
@@ -23,19 +24,22 @@ namespace TripPlanner.Controllers.Controllers
         [AllowAnonymous]
         [Route("register")]
         [HttpPost]
-        public async Task<bool> Register(RegisterUserDto registerUser)
+        public async Task<bool> Register(RegisterApiModel registerApiModel)
         {
+            var registerUser = _mapper.Map<RegisterUserDto>(registerApiModel);
             var user = _mapper.Map<User>(registerUser);
+
             return await _repository.Register(user, registerUser.Password);
         }
 
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
-        public async Task<TokenDto> Login(LoginDto loginUser)
+        public async Task<TokenDto> Login(LoginApiModel loginApiModel)
         {
-            return await _repository.Login(loginUser);
-           
+            var loginUser = _mapper.Map<LoginDto>(loginApiModel);
+
+            return await _repository.Login(loginUser);         
         }
 
         [Route("logout")]

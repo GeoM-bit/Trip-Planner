@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.DtoModels;
 using TripPlanner.Logic.Repositories;
@@ -31,9 +32,12 @@ namespace TripPlanner.Controllers.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> Post(BusinessTripRequest trip)
+        public async Task<bool> Post(RegisterBusinessTripApiModel registerBusinessTripApiModel)
         {
-            return await _repository.CreateTrip(trip);
+            var registerBusinessTripDto = _mapper.Map<RegisterBusinessTripDto>(registerBusinessTripApiModel);
+            var businessTripRequest = _mapper.Map<BusinessTripRequest>(registerBusinessTripDto);
+
+            return await _repository.CreateTrip(businessTripRequest);
         }
 
         [HttpPut("{id}")]
