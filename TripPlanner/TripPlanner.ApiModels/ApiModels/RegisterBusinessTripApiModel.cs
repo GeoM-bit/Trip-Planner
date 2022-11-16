@@ -39,12 +39,14 @@ namespace TripPlanner.ApiModels.ApiModels
             {
                 yield return result;
             }
+
             yield return ApiValidations.ApiValidations.ValidateRequired(ProjectName, nameof(ProjectName));
 
             foreach (ValidationResult result in ApiValidations.ApiValidations.ValidateOnlyDigitsLength(ProjectNumber, nameof(ProjectNumber)))
             {
                 yield return result;
             }
+
             yield return ApiValidations.ApiValidations.ValidateRequired(ProjectNumber, nameof(ProjectNumber));
 
             yield return ApiValidations.ApiValidations.ValidateOnlyLetters(TaskName, nameof(TaskName));
@@ -55,6 +57,7 @@ namespace TripPlanner.ApiModels.ApiModels
             {
                 yield return result;
             }
+
             yield return ApiValidations.ApiValidations.ValidateRequired(TaskNumber, nameof(TaskNumber));
 
             yield return ApiValidations.ApiValidations.ValidateOnlyLetters(ClientLocation, nameof(ClientLocation));
@@ -77,6 +80,10 @@ namespace TripPlanner.ApiModels.ApiModels
             {
                 yield return result;
             }
+
+            yield return ApiValidations.ApiValidations.ValidatePastDate(StartDate);
+            yield return ApiValidations.ApiValidations.ValidateDateRequired(StartDate, nameof(StartDate));
+            yield return ApiValidations.ApiValidations.ValidateDateRequired(EndDate, nameof(EndDate));
 
             if (AdditionalInfo != null)
             {

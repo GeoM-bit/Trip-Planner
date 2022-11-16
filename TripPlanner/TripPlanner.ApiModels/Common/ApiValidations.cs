@@ -15,8 +15,10 @@ namespace TripPlanner.ApiModels.ApiValidations
                 {
                     return new ValidationResult(errorMessage: "Invalid email.", memberNames: new[] { "Email" });
                 }
+
                 return ValidationResult.Success;
             }
+
             return new ValidationResult(errorMessage: "Email required.", memberNames: new[] { "Email" });
         }
 
@@ -28,8 +30,10 @@ namespace TripPlanner.ApiModels.ApiValidations
                 {
                   return new ValidationResult(errorMessage: "Invalid password.", memberNames: new[] { "Password" });
                 }
+
                 return ValidationResult.Success;
             }
+
             return new ValidationResult(errorMessage: "Password required.", memberNames: new[] { "Password" });
         }
 
@@ -50,14 +54,19 @@ namespace TripPlanner.ApiModels.ApiValidations
             {
                 yield return new ValidationResult(errorMessage: "End Date must be greater than Start Date.", memberNames: new[] { "EndDate" });
             }
+        }
 
+        public static ValidationResult ValidatePastDate(DateTimeOffset? startDate)
+        {
             if (startDate != null)
             {
                 if (DateTime.Parse(startDate.ToString().Split(" ")[0]) <= DateTime.Today)
                 {
-                    yield return new ValidationResult("Start date cannot be in the past or today.", new[] { "StartDate" });
+                    return new ValidationResult("Start date cannot be in the past or today.", new[] { "StartDate" });
                 }
             }
+
+            return ValidationResult.Success;
         }
 
         public static ValidationResult ValidateRequired(string fieldValue, string fieldName)
@@ -66,6 +75,17 @@ namespace TripPlanner.ApiModels.ApiValidations
             {
                 return new ValidationResult($"Field {fieldName} is required.");
             }
+
+            return ValidationResult.Success;
+        }
+
+        public static ValidationResult ValidateDateRequired(DateTimeOffset fieldValue, string fieldName)
+        {
+            if (fieldValue == null)
+            {
+                return new ValidationResult($"Field {fieldName} is required.");
+            }
+
             return ValidationResult.Success;
         }
 
@@ -77,8 +97,10 @@ namespace TripPlanner.ApiModels.ApiValidations
                 {
                     return new ValidationResult(errorMessage: $"Field {fieldName} can only contain letters.", memberNames: new[] { fieldName });
                 }
+
                 return ValidationResult.Success;
             }
+
             return ValidationResult.Success;
         }
 
@@ -88,6 +110,7 @@ namespace TripPlanner.ApiModels.ApiValidations
             {
                 return new ValidationResult(errorMessage: $"Maximum length of {fieldName} field is 50 characters.", memberNames: new[] { fieldName });
             }
+
             return ValidationResult.Success;         
         }
 
