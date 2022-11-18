@@ -18,11 +18,13 @@ builder.Services.AddDbContext<TripPlannerContext>(options =>
 
 // Identity
 builder.Services.AddIdentity<User,Role>(options=>
-    {
-        options.SignIn.RequireConfirmedAccount = false;
-        options.Lockout.MaxFailedAccessAttempts = 5;
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
-	}).AddEntityFrameworkStores<TripPlannerContext>().AddDefaultTokenProviders();
+                                        {
+                                            options.SignIn.RequireConfirmedAccount = false;
+                                            options.Lockout.MaxFailedAccessAttempts = 5;
+                                            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+	                                    })
+                .AddEntityFrameworkStores<TripPlannerContext>()
+                .AddDefaultTokenProviders();
 
 // Dependency Injection for Repositories
 builder.Services.AddScoped<IBusinessTripRequestRepository, BusinessTripRequestRepository>();
@@ -35,7 +37,13 @@ builder.Services.AddAutoMapper(typeof(BusinessTripRequestProfile));
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+                                   {
+                                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                                        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                                    })
+.AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -44,7 +52,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new
         SymmetricSecurityKey
         (Encoding.UTF8.GetBytes

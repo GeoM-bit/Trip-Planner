@@ -71,55 +71,55 @@ namespace TripPlanner.Logic.Repositories
             return false;
         }
 
-        public async Task<IEnumerable<BusinessTripRequest>> GetAllTripsForUserByCriteria(string email, SearchCriteria searchCriteria)
+        public async Task<IEnumerable<BusinessTripRequest>> GetAllTripsForUserByCriteria(GetTripsForUser getTripsForUser)
         {
-            var model = await _context.BusinessTripRequests.Where(e => e.Email.Equals(email)).ToListAsync();
-            model = FilterBusinessTripsByCriteria(model, searchCriteria).Result;
-            return model;
+            var model = _context.BusinessTripRequests.Where(e => e.Email.Equals(getTripsForUser.Email));
+            var result = FilterBusinessTripsByCriteria(model, getTripsForUser.SearchCriteria).Result;
+          
+            return result;
         }
 
         public async Task<IEnumerable<BusinessTripRequest>> GetPendingRequestsByCriteria(SearchCriteria searchCriteria)
         {
-            var model = await _context.BusinessTripRequests.
-                Where(b => b.Status == RequestStatus.Pending).ToListAsync();
-            model = FilterBusinessTripsByCriteria(model, searchCriteria).Result;
-            return model;
+            var model = _context.BusinessTripRequests.Where(b => b.Status == RequestStatus.Pending);
+            var result = FilterBusinessTripsByCriteria(model, searchCriteria).Result;
+
+            return result;
         }
 
-        private Task<List<BusinessTripRequest>> FilterBusinessTripsByCriteria(IEnumerable<BusinessTripRequest> businessTrips, SearchCriteria searchCriterias)
+        private async Task<List<BusinessTripRequest>> FilterBusinessTripsByCriteria(IQueryable<BusinessTripRequest> businessTrips, SearchCriteria searchCriteria)
         {
-            IQueryable<BusinessTripRequest> result = businessTrips.AsQueryable<BusinessTripRequest>();
-
-            if (searchCriterias == null)
+            if(searchCriteria==null)
             {
-                return Task.FromResult(result.Where(bt => bt.Status.Equals(RequestStatus.Pending)).ToList());
-            }
-            result = result.Where(bt => bt.Status.Equals(searchCriterias.Status));
-            if (!string.IsNullOrEmpty(searchCriterias.Location))
-            {
-                result = result
-                                .Where(bt => bt.ClientLocation.Equals(searchCriterias.Location));
+                return await businessTrips.ToListAsync();
             }
 
-            if (!string.IsNullOrEmpty(searchCriterias.Accomodation))
+            if(searchCriteria.Status!=null)
             {
-                result = result
-                                .Where(bt => bt.Accommodation.Equals(searchCriterias.Accomodation));
+                businessTrips=businessTrips.Where(b => b.Status == searchCriteria.Status);
             }
 
-            if (!string.IsNullOrEmpty(searchCriterias.Client))
+            if (searchCriteria.Client != null)
             {
-                result = result
-                                .Where(bt => bt.Client.Equals(searchCriterias.Client));
+                businessTrips = businessTrips.Where(b => b.Client == searchCriteria.Client);
             }
 
-            if (searchCriterias.StartDate != null && searchCriterias.EndDate != null)
+            if (searchCriteria.Accommodation != null)
             {
-                result = result
-                                .Where(bt => bt.StartDate >= searchCriterias.StartDate && bt.EndDate <= searchCriterias.EndDate);
+                businessTrips = businessTrips.Where(b => b.Accommodation == searchCriteria.Accommodation);
             }
 
-            return Task.FromResult(result.ToList());
+            if (searchCriteria.ClientLocation != null)
+            {
+                businessTrips = businessTrips.Where(b => b.ClientLocation == searchCriteria.ClientLocation);
+            }
+
+            if (searchCriteria.StartDate != null && searchCriteria.EndDate!= null)
+            {
+                businessTrips = businessTrips.Where(bt => bt.StartDate >= searchCriteria.StartDate && bt.EndDate <= searchCriteria.EndDate);
+            }
+
+            return await businessTrips.ToListAsync();
         }
 
     }

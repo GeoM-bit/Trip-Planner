@@ -9,7 +9,7 @@ namespace TripPlanner.Logic.Repositories
         Task<IEnumerable<BusinessTripRequest>> GetAllTrips();
         Task<bool> UpdateTrip(Guid id, BusinessTripRequest trip);
         Task<bool> DeleteTrip(Guid id);
-        Task<IEnumerable<BusinessTripRequest>> GetAllTripsForUserByCriteria(string email, SearchCriteria searchCriteria);
+        Task<IEnumerable<BusinessTripRequest>> GetAllTripsForUserByCriteria(GetTripsForUser getTripsForUser);
         Task<IEnumerable<BusinessTripRequest>> GetPendingRequestsByCriteria(SearchCriteria searchCriteria);
     }
 }
