@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.DatabaseModels.Models;
+using TripPlanner.Logic.Common;
 using TripPlanner.Logic.DtoModels;
 
 namespace TripPlanner.Controllers.Mappers
@@ -10,7 +11,7 @@ namespace TripPlanner.Controllers.Mappers
         public BusinessTripRequestProfile()
         {
             CreateMap<BusinessTripRequest, UserBusinessTripDto>();
-            CreateMap<BusinessTripRequest, BtoBusinessTripDto>();
+            CreateMap<BtoTripsModel, BtoBusinessTripDto>();
             CreateMap<RegisterBusinessTripApiModel, RegisterBusinessTripDto>();
             CreateMap<RegisterBusinessTripDto, BusinessTripRequest>();
         }

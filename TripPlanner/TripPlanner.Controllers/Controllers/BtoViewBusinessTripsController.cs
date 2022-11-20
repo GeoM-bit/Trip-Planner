@@ -24,8 +24,8 @@ namespace TripPlanner.Controllers.Controllers
 
         [Authorize(Roles = "BTO")]
         [Route("TripsForBto")]
-        [HttpGet]
-        public async Task<IEnumerable<BtoBusinessTripDto>> GetTripsForBto([FromQuery] SearchCriteriaApiModel searchCriteriaApiModel)
+        [HttpPost]
+        public async Task<IEnumerable<BtoBusinessTripDto>> GetTripsForBto([FromBody] SearchCriteriaApiModel searchCriteriaApiModel)
         {
             var searchCriteria = _mapper.Map<SearchCriteria>(searchCriteriaApiModel);
             var trips = await _repository.GetPendingRequestsByCriteria(searchCriteria);

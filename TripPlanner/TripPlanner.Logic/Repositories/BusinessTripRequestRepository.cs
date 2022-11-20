@@ -74,20 +74,55 @@ namespace TripPlanner.Logic.Repositories
         public async Task<IEnumerable<BusinessTripRequest>> GetAllTripsForUserByCriteria(GetTripsForUser getTripsForUser)
         {
             var model = _context.BusinessTripRequests.Where(e => e.Email.Equals(getTripsForUser.Email));
-            var result = FilterBusinessTripsByCriteria(model, getTripsForUser.SearchCriteria).Result;
+            var result = FilterUserBusinessTripsByCriteria(model, getTripsForUser.SearchCriteria).Result;
           
             return result;
         }
 
-        public async Task<IEnumerable<BusinessTripRequest>> GetPendingRequestsByCriteria(SearchCriteria searchCriteria)
+        public async Task<IEnumerable<BtoTripsModel>> GetPendingRequestsByCriteria(SearchCriteria searchCriteria)
         {
-            var model = _context.BusinessTripRequests.Where(b => b.Status == RequestStatus.Pending);
-            var result = FilterBusinessTripsByCriteria(model, searchCriteria).Result;
+            var model = _context.BusinessTripRequests.
+                    Where(b => b.Status == RequestStatus.Pending)
+                    .Join(
+                    _context.Users,
+                    user => user.Email,
+                    request => request.Email,
+                    (request, user) => new
+                    {
+                        request.Id,
+                        user.FirstName,
+                        user.LastName,
+                        user.Email,
+                        request.ProjectName,
+                        request.PmName,
+                        request.Area,
+                        request.StartDate,
+                        request.EndDate,
+                        request.Accommodation,
+                        request.ClientLocation,
+                        request.Status,
+                        request.Client
+                    }).Select(bt => new BtoTripsModel()
+                    {
+                        Id = bt.Id,
+                        FirstName = bt.FirstName,
+                        LastName = bt.LastName,
+                        PMName = bt.PmName,
+                        Email = bt.Email,
+                        Area = (AreaType)bt.Area,
+                        ProjectName = bt.ProjectName,
+                        ClientLocation = bt.ClientLocation,
+                        StartDate = bt.StartDate,
+                        EndDate = bt.EndDate,
+                        Client = bt.Client,
+                        Accommodation = bt.Accommodation,
+                    });
+            var result = FilterBtoBusinessTripsByCriteria(model, searchCriteria).Result;
 
             return result;
         }
 
-        private async Task<List<BusinessTripRequest>> FilterBusinessTripsByCriteria(IQueryable<BusinessTripRequest> businessTrips, SearchCriteria searchCriteria)
+        private async Task<List<BusinessTripRequest>> FilterUserBusinessTripsByCriteria(IQueryable<BusinessTripRequest> businessTrips, SearchCriteria searchCriteria)
         {
             if(searchCriteria==null)
             {
@@ -115,6 +150,36 @@ namespace TripPlanner.Logic.Repositories
             }
 
             if (searchCriteria.StartDate != null && searchCriteria.EndDate!= null)
+            {
+                businessTrips = businessTrips.Where(bt => bt.StartDate >= searchCriteria.StartDate && bt.EndDate <= searchCriteria.EndDate);
+            }
+
+            return await businessTrips.ToListAsync();
+        }
+
+        private async Task<List<BtoTripsModel>> FilterBtoBusinessTripsByCriteria(IQueryable<BtoTripsModel> businessTrips, SearchCriteria searchCriteria)
+        {
+            if (searchCriteria == null)
+            {
+                return await businessTrips.ToListAsync();
+            }
+
+            if (searchCriteria.Client != null)
+            {
+                businessTrips = businessTrips.Where(b => b.Client == searchCriteria.Client);
+            }
+
+            if (searchCriteria.Accommodation != null)
+            {
+                businessTrips = businessTrips.Where(b => b.Accommodation == searchCriteria.Accommodation);
+            }
+
+            if (searchCriteria.ClientLocation != null)
+            {
+                businessTrips = businessTrips.Where(b => b.ClientLocation == searchCriteria.ClientLocation);
+            }
+
+            if (searchCriteria.StartDate != null && searchCriteria.EndDate != null)
             {
                 businessTrips = businessTrips.Where(bt => bt.StartDate >= searchCriteria.StartDate && bt.EndDate <= searchCriteria.EndDate);
             }
