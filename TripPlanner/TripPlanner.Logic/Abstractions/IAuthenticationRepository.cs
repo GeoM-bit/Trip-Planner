@@ -1,7 +1,7 @@
 ﻿using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.DtoModels;
 
-namespace TripPlanner.Logic.Repositories
+namespace TripPlanner.Logic.Abstractions
 {
     public interface IAuthenticationRepository
     {

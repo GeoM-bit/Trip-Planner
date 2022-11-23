@@ -7,6 +7,7 @@ using System.Text;
 using TripPlanner.Context;
 using TripPlanner.Controllers.Mappers;
 using TripPlanner.DatabaseModels.Models;
+using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.Repositories;
 using TripPlanner.Logic.Services;
 
@@ -84,6 +85,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSession();
+
 app.Use(async (context, next) =>
 {
     var token = context.Session.GetString("Token");
