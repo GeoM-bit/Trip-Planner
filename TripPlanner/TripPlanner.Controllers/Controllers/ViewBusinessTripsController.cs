@@ -21,7 +21,6 @@ namespace TripPlanner.Controllers.Controllers
             _mapper = mapper;
         }
 
-        [Authorize(Roles = "User, BTO")]
         [Route("ViewTrips")]
         [HttpPost]
         public async Task<IEnumerable<IBusinessTrip>> GetTrips([FromBody] SearchCriteriaApiModel? searchCriteria)
