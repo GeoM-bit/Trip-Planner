@@ -11,11 +11,9 @@ namespace TripPlanner.Controllers.Mappers
         public BusinessTripRequestProfile()
         {
             CreateMap<BusinessTripRequest, UserBusinessTripDto>();
-            CreateMap<BtoTripsModel, BtoBusinessTripDto>();
             CreateMap<RegisterBusinessTripApiModel, RegisterBusinessTripDto>();
             CreateMap<RegisterBusinessTripDto, BusinessTripRequest>();
             CreateMap<BusinessTripRequest, UserBusinessTrip>();
-            CreateMap<BtoTripsModel, BtoBusinessTrip>();
         }
     }
 }
