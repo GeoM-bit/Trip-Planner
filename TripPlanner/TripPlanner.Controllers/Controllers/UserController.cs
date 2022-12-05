@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.DatabaseModels.Models;
+using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.DtoModels;
-using TripPlanner.Logic.Repositories;
 
 namespace TripPlanner.Controllers.Controllers
 {

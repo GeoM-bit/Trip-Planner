@@ -1,7 +1,8 @@
 ﻿using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.Common;
+using TripPlanner.Logic.Common.Enums;
 
-namespace TripPlanner.Logic.Repositories
+namespace TripPlanner.Logic.Abstractions
 {
     public interface IBusinessTripRequestRepository
     {
@@ -9,7 +10,7 @@ namespace TripPlanner.Logic.Repositories
         Task<IEnumerable<BusinessTripRequest>> GetAllTrips();
         Task<bool> UpdateTrip(Guid id, BusinessTripRequest trip);
         Task<bool> DeleteTrip(Guid id);
-        Task<IEnumerable<BusinessTripRequest>> GetAllTripsForUserByCriteria(GetTripsForUser getTripsForUser);
-        Task<IEnumerable<BusinessTripRequest>> GetPendingRequestsByCriteria(SearchCriteria searchCriteria);
+        Task<IEnumerable<IBusinessTrip>> GetTripsByCriteria(SearchCriteria searchCriteria, string email);
+
     }
 }

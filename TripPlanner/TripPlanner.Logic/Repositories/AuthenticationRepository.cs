@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TripPlanner.Context;
 using TripPlanner.DatabaseModels.Models;
+using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.Common;
 using TripPlanner.Logic.Common.Enums;
 using TripPlanner.Logic.DtoModels;

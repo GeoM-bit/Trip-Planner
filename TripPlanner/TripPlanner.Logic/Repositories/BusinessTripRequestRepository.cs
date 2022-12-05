@@ -1,8 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TripPlanner.Context;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.DatabaseModels.Models.Enums;
+using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.Common;
+using TripPlanner.Logic.Common.Enums;
+using TripPlanner.Logic.DtoModels;
 using TripPlanner.Logic.Exceptions;
 
 namespace TripPlanner.Logic.Repositories
@@ -10,6 +14,7 @@ namespace TripPlanner.Logic.Repositories
     public class BusinessTripRequestRepository : IBusinessTripRequestRepository
     {
         private readonly TripPlannerContext _context;
+        private readonly IMapper _mapper;
 
         public BusinessTripRequestRepository(TripPlannerContext context)
         {
@@ -71,23 +76,78 @@ namespace TripPlanner.Logic.Repositories
             return false;
         }
 
-        public async Task<IEnumerable<BusinessTripRequest>> GetAllTripsForUserByCriteria(GetTripsForUser getTripsForUser)
+        public async Task<IEnumerable<IBusinessTrip>> GetTripsByCriteria(SearchCriteria searchCriteria, string email)
         {
-            var model = _context.BusinessTripRequests.Where(e => e.Email.Equals(getTripsForUser.Email));
-            var result = FilterBusinessTripsByCriteria(model, getTripsForUser.SearchCriteria).Result;
-          
-            return result;
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x=>x.Email==email);
+            var role = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserId == dbUser.Id);
+
+            if(role.RoleId==Constants.UserRoleId)
+            {
+                var model = _context.BusinessTripRequests
+                    .Where(e => e.Email.Equals(email))
+                    .Select(bt=>new UserBusinessTrip()
+                    {
+                        Id = bt.Id,
+                        ProjectName = bt.ProjectName,
+                        ClientLocation = bt.ClientLocation,
+                        StartDate = bt.StartDate,
+                        EndDate = bt.EndDate,
+                        Client = bt.Client,
+                        Status = bt.Status,
+                        Accommodation = bt.Accommodation
+                    })
+                    ;
+                var result = FilterUserBusinessTripsByCriteria(model, searchCriteria).Result;
+
+                return result;
+            }
+
+            if(role.RoleId==Constants.BtoRoleId)
+            {
+                var model = _context.BusinessTripRequests.
+                    Where(b => b.Status == RequestStatus.Pending)
+                    .Join(
+                    _context.Users,
+                    user => user.Email,
+                    request => request.Email,
+                    (request, user) => new
+                    {
+                        request.Id,
+                        user.FirstName,
+                        user.LastName,
+                        user.Email,
+                        request.ProjectName,
+                        request.PmName,
+                        request.Area,
+                        request.StartDate,
+                        request.EndDate,
+                        request.Accommodation,
+                        request.ClientLocation,
+                        request.Client
+                    }).Select(bt => new BtoBusinessTrip()
+                    {
+                        Id = bt.Id,
+                        FirstName = bt.FirstName,
+                        LastName = bt.LastName,
+                        PMName = bt.PmName,
+                        Email = bt.Email,
+                        Area = bt.Area,
+                        ProjectName = bt.ProjectName,
+                        ClientLocation = bt.ClientLocation,
+                        StartDate = bt.StartDate,
+                        EndDate = bt.EndDate,
+                        Client = bt.Client,
+                        Accommodation = bt.Accommodation
+                    });
+                var result = FilterBtoBusinessTripsByCriteria(model, searchCriteria).Result;
+
+                return result;
+            }
+
+            return null;
         }
 
-        public async Task<IEnumerable<BusinessTripRequest>> GetPendingRequestsByCriteria(SearchCriteria searchCriteria)
-        {
-            var model = _context.BusinessTripRequests.Where(b => b.Status == RequestStatus.Pending);
-            var result = FilterBusinessTripsByCriteria(model, searchCriteria).Result;
-
-            return result;
-        }
-
-        private async Task<List<BusinessTripRequest>> FilterBusinessTripsByCriteria(IQueryable<BusinessTripRequest> businessTrips, SearchCriteria searchCriteria)
+        private async Task<List<UserBusinessTrip>> FilterUserBusinessTripsByCriteria(IQueryable<UserBusinessTrip> businessTrips, SearchCriteria searchCriteria)
         {
             if(searchCriteria==null)
             {
@@ -115,6 +175,36 @@ namespace TripPlanner.Logic.Repositories
             }
 
             if (searchCriteria.StartDate != null && searchCriteria.EndDate!= null)
+            {
+                businessTrips = businessTrips.Where(bt => bt.StartDate >= searchCriteria.StartDate && bt.EndDate <= searchCriteria.EndDate);
+            }
+
+            return await businessTrips.ToListAsync();
+        }
+
+        private async Task<List<BtoBusinessTrip>> FilterBtoBusinessTripsByCriteria(IQueryable<BtoBusinessTrip> businessTrips, SearchCriteria searchCriteria)
+        {
+            if (searchCriteria == null)
+            {
+                return await businessTrips.ToListAsync();
+            }
+
+            if (searchCriteria.Client != null)
+            {
+                businessTrips = businessTrips.Where(b => b.Client == searchCriteria.Client);
+            }
+
+            if (searchCriteria.Accommodation != null)
+            {
+                businessTrips = businessTrips.Where(b => b.Accommodation == searchCriteria.Accommodation);
+            }
+
+            if (searchCriteria.ClientLocation != null)
+            {
+                businessTrips = businessTrips.Where(b => b.ClientLocation == searchCriteria.ClientLocation);
+            }
+
+            if (searchCriteria.StartDate != null && searchCriteria.EndDate != null)
             {
                 businessTrips = businessTrips.Where(bt => bt.StartDate >= searchCriteria.StartDate && bt.EndDate <= searchCriteria.EndDate);
             }
