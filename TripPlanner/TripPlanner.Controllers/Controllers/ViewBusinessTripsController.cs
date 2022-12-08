@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.Common;
+using TripPlanner.Logic.DtoModels;
 
 namespace TripPlanner.Controllers.Controllers
 {
@@ -30,6 +31,16 @@ namespace TripPlanner.Controllers.Controllers
             var trips = await _repository.GetTripsByCriteria(criteria, email);
            
             return trips;
+        }
+
+        [Route("UpdateTrip")]
+        [HttpPut]
+        public async Task<bool> UpdateTrip(UpdateStatusApiModel updateStatusApiModel)
+        {
+            var updateStatusModel = _mapper.Map<UpdateStatusModel>(updateStatusApiModel);
+            var result = await _repository.UpdateStatus(updateStatusModel);
+            
+            return result;
         }
     }
 }

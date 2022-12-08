@@ -76,6 +76,14 @@ namespace TripPlanner.Logic.Repositories
             return false;
         }
 
+        public async Task<bool> UpdateStatus(UpdateStatusModel updateStatusModel)
+        {
+            var currentBusinessTripRequest = await _context.BusinessTripRequests.FirstOrDefaultAsync(user => user.Id.Equals(updateStatusModel.Id));
+            currentBusinessTripRequest.Status = (updateStatusModel.Status);
+            _context.BusinessTripRequests.Update(currentBusinessTripRequest);
+            return await _context.SaveChangesAsync() == 1;
+        }
+
         public async Task<IEnumerable<IBusinessTrip>> GetTripsByCriteria(SearchCriteria searchCriteria, string email)
         {
             var dbUser = await _context.Users.FirstOrDefaultAsync(x=>x.Email==email);
