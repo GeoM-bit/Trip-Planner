@@ -21,15 +21,6 @@ namespace TripPlanner.Controllers.Controllers
             _repository = repository;
             _mapper = mapper;
         }
-       
-        [HttpGet]
-        public async Task<IEnumerable<BtoBusinessTripDto>> Get()
-        {
-            var trips = await _repository.GetAllTrips();
-            var tripsDto = _mapper.Map<List<BtoBusinessTripDto>>(trips);
-
-            return tripsDto;
-        }
 
         [HttpPost]
         public async Task<bool> Post(RegisterBusinessTripApiModel registerBusinessTripApiModel)
@@ -38,18 +29,6 @@ namespace TripPlanner.Controllers.Controllers
             var businessTripRequest = _mapper.Map<BusinessTripRequest>(registerBusinessTripDto);
 
             return await _repository.CreateTrip(businessTripRequest);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<bool> Put(Guid id, BusinessTripRequest trip)
-        {
-            return await _repository.UpdateTrip(id, trip);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<bool> Delete(Guid id)
-        {
-            return await _repository.DeleteTrip(id);
         }
     }
 }
