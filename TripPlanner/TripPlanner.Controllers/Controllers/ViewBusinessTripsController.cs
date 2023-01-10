@@ -7,7 +7,7 @@ using TripPlanner.Logic.Common;
 
 namespace TripPlanner.Controllers.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ViewBusinessTripsController : ControllerBase

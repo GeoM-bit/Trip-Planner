@@ -8,7 +8,7 @@ using TripPlanner.Logic.DtoModels;
 
 namespace TripPlanner.Controllers.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class BusinessTripRequestController : ControllerBase

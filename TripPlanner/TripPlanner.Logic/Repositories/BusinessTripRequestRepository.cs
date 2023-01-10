@@ -78,6 +78,7 @@ namespace TripPlanner.Logic.Repositories
 
         public async Task<IEnumerable<IBusinessTrip>> GetTripsByCriteria(SearchCriteria searchCriteria, string email)
         {
+            email = "dragos.boboluta@nagarro.com";
             var dbUser = await _context.Users.FirstOrDefaultAsync(x=>x.Email==email);
             var role = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserId == dbUser.Id);
 
