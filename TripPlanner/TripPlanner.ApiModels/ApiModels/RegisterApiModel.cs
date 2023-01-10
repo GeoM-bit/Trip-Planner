@@ -5,22 +5,17 @@ namespace TripPlanner.ApiModels.ApiModels
 {
     public class RegisterApiModel : IValidatableObject
     {
-		public string FirstName { get; set; }
-		public string LastName { get; set; }
+        [RegularExpression(@"^[A-Za-z ]+$", ErrorMessage = "FirstName can only contain letters.")]
+        public string FirstName { get; set; }
+        [RegularExpression(@"^[A-Za-z ]+$", ErrorMessage = "LastName can only contain letters.")]
+        public string LastName { get; set; }
+        [EmailAddress]
 		public string Email { get; set; }
 		public string Password { get; set; }
 		public string ConfirmationPassword { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            yield return ApiValidations.ApiValidations.ValidateOnlyLetters(FirstName, nameof(FirstName));
-            yield return ApiValidations.ApiValidations.ValidateRequired(FirstName, nameof(FirstName));
-
-            yield return ApiValidations.ApiValidations.ValidateOnlyLetters(LastName, nameof(LastName));
-            yield return ApiValidations.ApiValidations.ValidateRequired(LastName, nameof(LastName));
-
-            yield return ApiValidations.ApiValidations.ValidateEmail(Email);
-
             yield return ApiValidations.ApiValidations.ValidatePassword(Password);
 
             if (ConfirmationPassword!=null)

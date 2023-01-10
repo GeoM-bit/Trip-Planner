@@ -5,8 +5,8 @@ namespace TripPlanner.ApiModels.ApiModels
 {
     public class UpdateStatusApiModel : IValidatableObject
     {
-        public RequestStatus? Status { get; set; }
-        public Guid? Id { get; set; }
+        public RequestStatus Status { get; set; }
+        public Guid Id { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
