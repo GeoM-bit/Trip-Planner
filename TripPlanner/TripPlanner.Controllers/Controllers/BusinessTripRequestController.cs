@@ -6,6 +6,7 @@ using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.DtoModels;
+using TripPlanner.Logic.Services.EmailService;
 using TripPlanner.Logic.Services.EmailService.Smtp;
 
 namespace TripPlanner.Controllers.Controllers
@@ -17,17 +18,20 @@ namespace TripPlanner.Controllers.Controllers
     {
         private readonly IBusinessTripRequestRepository _repository;
         private readonly IMapper _mapper;
-        private readonly SmtpOptions _config;
-        public BusinessTripRequestController(IBusinessTripRequestRepository repository, IMapper mapper,IOptions<SmtpOptions> config)
+        private readonly IEmailService _emailService;
+        
+        public BusinessTripRequestController(IBusinessTripRequestRepository repository, IMapper mapper , IEmailService emailService)
         {
             _repository = repository;
             _mapper = mapper;
-            _config = config.Value;
+            _emailService = emailService;
+            
         }
        
         [HttpGet]
         public async Task<IEnumerable<BtoBusinessTripDto>> Get()
         {
+            _emailService.SendEmail();
             var trips = await _repository.GetAllTrips();
             var tripsDto = _mapper.Map<List<BtoBusinessTripDto>>(trips);
 

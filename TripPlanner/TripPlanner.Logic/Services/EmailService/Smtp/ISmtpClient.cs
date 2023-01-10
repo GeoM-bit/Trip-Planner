@@ -9,6 +9,6 @@ namespace TripPlanner.Logic.Services.EmailService.Smtp
 {
     public interface ISmtpClient
     {
-        void SendMailAsync(MailMessage message);
+          Task SendMailAsync(MailMessage message);
     }
 }

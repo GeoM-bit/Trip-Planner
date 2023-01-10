@@ -33,7 +33,7 @@ builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("SmtpCo
 builder.Services.AddScoped<IBusinessTripRequestRepository, BusinessTripRequestRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
-builder.Services.AddScoped<ISmtpClient, SmtpClient>();
+builder.Services.AddScoped<ISmtpClient, RealSmtpClient>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(BusinessTripRequestProfile));

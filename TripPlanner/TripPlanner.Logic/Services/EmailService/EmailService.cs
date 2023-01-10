@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
@@ -11,9 +12,11 @@ namespace TripPlanner.Logic.Services.EmailService
     public class EmailService : IEmailService
     {
         private ISmtpClient smtpClient;
-        public EmailService(ISmtpClient smtpClient)
+        private readonly SmtpOptions _config;
+        public EmailService(ISmtpClient smtpClient, IOptions<SmtpOptions> config)
         {
             this.smtpClient = smtpClient;
+            _config = config.Value;
         }
         public void SendEmail() {
             MailAddress from = new MailAddress("dragos.boboluta@nagarro.com", "dragos", System.Text.Encoding.UTF8);
