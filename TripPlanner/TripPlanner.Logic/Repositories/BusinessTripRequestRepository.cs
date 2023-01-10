@@ -36,7 +36,7 @@ namespace TripPlanner.Logic.Repositories
 
             if (role.RoleId == Constants.UserRoleId)
             {
-                if (updateStatusModel.Status != RequestStatus.Cancelled)
+                if (updateStatusModel.Status != RequestStatus.Cancelled && updateStatusModel.Status != RequestStatus.Accepted)
                     throw new InvalidStatusChangeRequestException($"The user is not allowed to update to {updateStatusModel.Status} status!");
             }
 
