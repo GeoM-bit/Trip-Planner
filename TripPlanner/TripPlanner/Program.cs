@@ -10,6 +10,8 @@ using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.Repositories;
 using TripPlanner.Logic.Services;
+using TripPlanner.Logic.Services.EmailService;
+using TripPlanner.Logic.Services.EmailService.Smtp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,12 +28,13 @@ builder.Services.AddIdentity<User,Role>(options=>
 	                                    })
                 .AddEntityFrameworkStores<TripPlannerContext>()
                 .AddDefaultTokenProviders();
-
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("SmtpConfigurationModel"));
 // Dependency Injection for Repositories
 builder.Services.AddScoped<IBusinessTripRequestRepository, BusinessTripRequestRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
-
+builder.Services.AddScoped<ISmtpClient, SmtpClient>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(BusinessTripRequestProfile));
 

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.DtoModels;
+using TripPlanner.Logic.Services.EmailService.Smtp;
 
 namespace TripPlanner.Controllers.Controllers
 {
@@ -15,11 +17,12 @@ namespace TripPlanner.Controllers.Controllers
     {
         private readonly IBusinessTripRequestRepository _repository;
         private readonly IMapper _mapper;
-
-        public BusinessTripRequestController(IBusinessTripRequestRepository repository, IMapper mapper)
+        private readonly SmtpOptions _config;
+        public BusinessTripRequestController(IBusinessTripRequestRepository repository, IMapper mapper,IOptions<SmtpOptions> config)
         {
             _repository = repository;
             _mapper = mapper;
+            _config = config.Value;
         }
        
         [HttpGet]
