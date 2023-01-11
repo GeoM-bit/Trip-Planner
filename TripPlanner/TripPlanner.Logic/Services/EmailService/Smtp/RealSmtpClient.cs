@@ -26,7 +26,7 @@ namespace TripPlanner.Logic.Services.EmailService.Smtp
             };
             try
             {
-                smtp.Send(message);
+                await smtp.SendMailAsync(message);
             }
             catch (SmtpException ex)
             {
