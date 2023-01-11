@@ -1,30 +1,36 @@
 ﻿using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace TripPlanner.Logic.Services.EmailService.Smtp
 {
     public class RealSmtpClient : ISmtpClient
     {
-        private readonly SmtpOptions config;
-        public RealSmtpClient(IOptions<SmtpOptions> options )
-        {
-           config = options.Value;
-        }
+        private readonly EmailUser _user;
+        private readonly SmtpOptions _config;
 
-        public async Task SendMailAsync(MailMessage message)
+        public RealSmtpClient(IOptions<SmtpOptions> config ,IOptions<EmailUser>user)
         {
-            SmtpClient client = new SmtpClient(config.Host, Convert.ToInt32(config.Port));
-            client.EnableSsl = config.EnableSsl;
-            client.Credentials = new NetworkCredential("dragos.boboluta@nagarro.com", "Aezakmi20021995@");
-            
-            await client.SendMailAsync(message);
-           
+            _config = config.Value;
+            _user = user.Value;
+        }
+       
+        public async Task SendMailAsync(MailMessage message )
+        {
+            SmtpClient smtp = new SmtpClient(_config.ServerName)
+            {
+                Port = Convert.ToInt32(_config.Port),
+                EnableSsl = _config.EnableSsl,
+                Credentials = new NetworkCredential(_user.Email, _user.Password),
+                Host = _config.Host,
+            };
+            try
+            {
+                smtp.Send(message);
+            }
+            catch (SmtpException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

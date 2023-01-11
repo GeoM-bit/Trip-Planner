@@ -29,6 +29,7 @@ builder.Services.AddIdentity<User,Role>(options=>
                 .AddEntityFrameworkStores<TripPlannerContext>()
                 .AddDefaultTokenProviders();
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("SmtpConfigurationModel"));
+builder.Services.Configure<EmailUser>(builder.Configuration.GetSection("EmailUser"));
 // Dependency Injection for Repositories
 builder.Services.AddScoped<IBusinessTripRequestRepository, BusinessTripRequestRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();

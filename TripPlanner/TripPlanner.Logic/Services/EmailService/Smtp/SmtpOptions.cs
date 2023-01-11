@@ -11,5 +11,6 @@ namespace TripPlanner.Logic.Services.EmailService.Smtp
         public string Host { get; set; } = string.Empty;
         public string Port { get; set; } = string.Empty;
         public bool EnableSsl { get; set; } = false;
+        public string ServerName { get; set; } = string.Empty;
     }
 }
