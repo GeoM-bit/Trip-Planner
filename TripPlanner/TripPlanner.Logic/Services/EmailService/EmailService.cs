@@ -1,31 +1,30 @@
 ﻿using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 using TripPlanner.Logic.Services.EmailService.Smtp;
 
 namespace TripPlanner.Logic.Services.EmailService
-{
+{   
+
     public class EmailService : IEmailService
     {
-        private ISmtpClient smtpClient;
-        public EmailService(ISmtpClient smtpClient)
+        private readonly EmailUser _user;
+        private ISmtpClient _smtpClient;
+        public EmailService(ISmtpClient smtpClient, IOptions<EmailUser> user)
         {
-            this.smtpClient = smtpClient;
+            _smtpClient = smtpClient;
+            _user = user.Value;
         }
 
-        public void SendEmail() {
-            MailAddress from = new MailAddress("dragos.boboluta@nagarro.com");
+        public void SendEmail() 
+        {
+            MailAddress from = new MailAddress(_user.Email);
             MailAddress to = new MailAddress("paul.crasmareanu@nagarro.com");
             MailMessage message = new MailMessage(from, to);
             AlternateView alternateView = AlternateView.CreateAlternateViewFromString("<html><body>test :) </body</html>");
             message.IsBodyHtml = true;
             message.Body = "<html><body>Test Email </body></html>";
-            smtpClient.SendMailAsync(message);
+
+            _smtpClient.SendMailAsync(message);
         }
     }
 }
