@@ -30,8 +30,8 @@ namespace TripPlanner.Controllers.Controllers
        
         [HttpGet]
         public async Task<IEnumerable<BtoBusinessTripDto>> Get()
-        {
-            _emailService.SendEmail();
+        {   
+
             var trips = await _repository.GetAllTrips();
             var tripsDto = _mapper.Map<List<BtoBusinessTripDto>>(trips);
 
@@ -44,7 +44,18 @@ namespace TripPlanner.Controllers.Controllers
             var registerBusinessTripDto = _mapper.Map<RegisterBusinessTripDto>(registerBusinessTripApiModel);
             var businessTripRequest = _mapper.Map<BusinessTripRequest>(registerBusinessTripDto);
 
-            return await _repository.CreateTrip(businessTripRequest);
+            var result = await _repository.CreateTrip(businessTripRequest);
+            if (result == false)
+            {
+                return false;
+            }
+            else
+            {
+                _emailService.SendEmail(registerBusinessTripApiModel.Email);
+
+                return result;
+
+            }
         }
 
         [HttpPut("{id}")]
