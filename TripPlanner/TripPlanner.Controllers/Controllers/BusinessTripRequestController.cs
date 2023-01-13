@@ -41,7 +41,7 @@ namespace TripPlanner.Controllers.Controllers
             }
             else
             {
-                _emailService.SendEmail(registerBusinessTripApiModel.Email);
+                _emailService.SendEmail("created", registerBusinessTripApiModel.Email);
 
                 return result;
 

@@ -22,7 +22,7 @@ namespace TripPlanner.Logic.Services.EmailService
                           <tr style='font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;'>
                               <td class='' style='font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 16px; vertical-align: top; color: #fff; font-weight: 500; text-align: center; border-radius: 3px 3px 0 0; background-color: #476DDA; margin: 0; padding: 10px;'
                                   align='center' bgcolor='#71b6f9' valign='top'>
-                                  <p style='font-size:28px;color:#fff;'> Business trip request was created </p>
+                                  <p style='font-size:28px;color:#fff;'> Business trip request was {0} </p>
                               </td>
                           </tr>
                           <tr style='font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;'>
@@ -31,8 +31,8 @@ namespace TripPlanner.Logic.Services.EmailService
                                       <tbody>
                                           <tr style='font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;'>
                                               <td class='content-block' style='font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;' valign='top'>
-                                                  Dear <strong>{0}</strong>, <br/> <br/>
-                                                  You created a new trip request  <br /> 
+                                                  Dear <strong>{1}</strong>, <br/> <br/>
+                                                  {2} <br /> 
                                                   
                                               </td>
                                           </tr>                                         
@@ -69,14 +69,20 @@ namespace TripPlanner.Logic.Services.EmailService
             _user = user.Value;
         }
 
-        public async void SendEmail(string email) 
+        public async void SendEmail(string status,string email) 
         {
             MailAddress from = new MailAddress(_user.Email);
             MailAddress to = new MailAddress(email);
             MailMessage message = new MailMessage(from, to);
             
             message.IsBodyHtml = true;
-            message.Body = string.Format(template,to);
+            switch (status)
+            {
+                case "accepted": message.Body = string.Format(template, status, email,"You trip request was aceepted");break;
+                case "rejected": message.Body = string.Format(template, status, email,"Your trip request was rejected");break;
+                case "created": message.Body = string.Format(template, status, email,"You created a new trip request"); break;
+            }
+            
 
             await _smtpClient.SendMailAsync(message);
         }
