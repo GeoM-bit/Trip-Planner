@@ -42,18 +42,14 @@ namespace TripPlanner.Controllers.Controllers
             var loginUser = _mapper.Map<LoginDto>(loginApiModel);
             var token = await _repository.Login(loginUser);
 
-            if(token!=null)
-                HttpContext.Session.Set("Token", Encoding.ASCII.GetBytes(token.Token));
-
             return token;
         }
 
         [Route("logout")]
-        [Authorize(Roles = "User, BTO")]
+        [Authorize]
         [HttpPost]
         public async Task Logout()
         {
-            HttpContext.Session.Remove("Token");
             await _repository.Logout();
         }
     }
