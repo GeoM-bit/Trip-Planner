@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.Abstractions;
@@ -38,12 +40,13 @@ namespace TripPlanner.Controllers.Controllers
         public async Task<TokenDto> Login(LoginApiModel loginApiModel)
         {
             var loginUser = _mapper.Map<LoginDto>(loginApiModel);
+            var token = await _repository.Login(loginUser);
 
-            return await _repository.Login(loginUser);         
+            return token;
         }
 
         [Route("logout")]
-        [Authorize(Roles = "User, BTO")]
+        [Authorize]
         [HttpPost]
         public async Task Logout()
         {

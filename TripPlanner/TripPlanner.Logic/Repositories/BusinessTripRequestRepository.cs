@@ -5,7 +5,6 @@ using TripPlanner.DatabaseModels.Models;
 using TripPlanner.DatabaseModels.Models.Enums;
 using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.Common;
-using TripPlanner.Logic.Common.Enums;
 using TripPlanner.Logic.DtoModels;
 using TripPlanner.Logic.Exceptions;
 
@@ -14,7 +13,6 @@ namespace TripPlanner.Logic.Repositories
     public class BusinessTripRequestRepository : IBusinessTripRequestRepository
     {
         private readonly TripPlannerContext _context;
-        private readonly IMapper _mapper;
 
         public BusinessTripRequestRepository(TripPlannerContext context)
         {
@@ -31,55 +29,37 @@ namespace TripPlanner.Logic.Repositories
             return false;
         }
 
-        public async Task<IEnumerable<BusinessTripRequest>> GetAllTrips()
+        public async Task<bool> UpdateStatus(Guid id, UpdateStatusModel updateStatusModel, string email)
         {
-            return await _context.BusinessTripRequests.ToListAsync();
-        }
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == email) ?? throw new EntityNotFoundException($"The user with the email: {email} does not exist!");
+            var role = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserId == dbUser.Id) ?? throw new EntityNotFoundException($"The user with the id:{dbUser.Id} does not have a role!");
 
-        public async Task<bool> UpdateTrip(Guid id, BusinessTripRequest trip)
-        {
-            var tripFromDb = await _context.BusinessTripRequests.FirstOrDefaultAsync(x => x.Id == id);
-            if (tripFromDb == null)
-                throw new EntityNotFoundException("The Business Trip to be updated does not exist!");
+            if (role.RoleId == Constants.UserRoleId)
+            {
+                if (updateStatusModel.Status != RequestStatus.Cancelled && updateStatusModel.Status != RequestStatus.Accepted)
+                    throw new InvalidStatusChangeRequestException($"The user is not allowed to update to {updateStatusModel.Status} status!");
+            }
 
-            tripFromDb.Area = trip.Area;
-            tripFromDb.ProjectNumber = trip.ProjectNumber;
-            tripFromDb.TaskNumber = trip.TaskNumber;
-            tripFromDb.PmName = trip.PmName;
-            tripFromDb.Accommodation = trip.Accommodation;
-            tripFromDb.TaskName = trip.TaskName;
-            tripFromDb.AdditionalInfo = trip.AdditionalInfo;
-            tripFromDb.Card = trip.Card;
-            tripFromDb.Client = trip.Client;
-            tripFromDb.ClientLocation = trip.ClientLocation;
-            tripFromDb.StartDate = trip.StartDate;
-            tripFromDb.EndDate = tripFromDb.EndDate;
-            _context.BusinessTripRequests.Update(tripFromDb);
-            var result = await _context.SaveChangesAsync();
+            if (role.RoleId == Constants.BtoRoleId)
+            {
+                if (updateStatusModel.Status != RequestStatus.Accepted && updateStatusModel.Status != RequestStatus.Rejected)
+                    throw new InvalidStatusChangeRequestException($"The BTO is not allowed to update to {updateStatusModel.Status} status!");
+            }
 
-            if (result > 0)
-                return true;
-            return false;
-        }
+            var currentBusinessTripRequest = await _context.BusinessTripRequests.FirstOrDefaultAsync(user => user.Id == id);
+            if (currentBusinessTripRequest == null)
+                throw new EntityNotFoundException($"The business trip with id {id} was not found");
 
-        public async Task<bool> DeleteTrip(Guid id)
-        {
-            var tripFromDb = await _context.BusinessTripRequests.FirstOrDefaultAsync(x=>x.Id==id);
-            if(tripFromDb == null)
-                throw new EntityNotFoundException("The Business Trip to be deleted does not exist!");
+            currentBusinessTripRequest.Status = (updateStatusModel.Status);
+            _context.BusinessTripRequests.Update(currentBusinessTripRequest);
 
-            _context.BusinessTripRequests.Remove(tripFromDb);
-            var result = await _context.SaveChangesAsync();
-
-            if (result > 0)
-                return true;
-            return false;
+            return await _context.SaveChangesAsync() == 1;
         }
 
         public async Task<IEnumerable<IBusinessTrip>> GetTripsByCriteria(SearchCriteria searchCriteria, string email)
         {
-            var dbUser = await _context.Users.FirstOrDefaultAsync(x=>x.Email==email);
-            var role = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserId == dbUser.Id);
+            var dbUser = await _context.Users.FirstOrDefaultAsync(x=>x.Email==email) ?? throw new EntityNotFoundException($"The user with the email: {email} does not exist!");
+            var role = await _context.UserRoles.FirstOrDefaultAsync(x => x.UserId == dbUser.Id) ?? throw new EntityNotFoundException($"The user with the id:{dbUser.Id} does not have a role!"); ;
 
             if(role.RoleId==Constants.UserRoleId)
             {
