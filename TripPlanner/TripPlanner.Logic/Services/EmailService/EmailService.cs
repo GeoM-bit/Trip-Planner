@@ -32,7 +32,7 @@ namespace TripPlanner.Logic.Services.EmailService
                                           <tr style='font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;'>
                                               <td class='content-block' style='font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;' valign='top'>
                                                   Dear <strong>{0}</strong>, <br/> <br/>
-                                                  A new Business trip was created by {1} <br /> 
+                                                  You created a new trip request  <br /> 
                                                   
                                               </td>
                                           </tr>                                         
@@ -76,7 +76,7 @@ namespace TripPlanner.Logic.Services.EmailService
             MailMessage message = new MailMessage(from, to);
             
             message.IsBodyHtml = true;
-            message.Body = string.Format(template,from,to);
+            message.Body = string.Format(template,to);
 
             await _smtpClient.SendMailAsync(message);
         }
