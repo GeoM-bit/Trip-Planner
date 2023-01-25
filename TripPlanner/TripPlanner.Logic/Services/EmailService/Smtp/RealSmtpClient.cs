@@ -23,6 +23,7 @@ namespace TripPlanner.Logic.Services.EmailService.Smtp
                 EnableSsl = _config.EnableSsl,
                 Credentials = new NetworkCredential(_user.Email, _user.Password),
                 Host = _config.Host,
+                
             };
             try
             {

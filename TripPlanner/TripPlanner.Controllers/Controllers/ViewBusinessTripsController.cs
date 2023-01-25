@@ -42,7 +42,7 @@ namespace TripPlanner.Controllers.Controllers
         [HttpPut]
         public async Task<bool> UpdateTripStatus(Guid id, [FromQuery] UpdateStatusApiModel updateStatusApiModel)
         {
-            var email = User.Identity.Name ?? throw new IdentityUserNameNotFoundException("No username was found!");
+            var email = "dragos.boboluta@nagarro.com";
             var updateStatusModel = _mapper.Map<UpdateStatusModel>(updateStatusApiModel);
             var result = await _repository.UpdateStatus(id, updateStatusModel, email);
             if (result == true)
