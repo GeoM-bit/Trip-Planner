@@ -72,7 +72,7 @@ namespace TripPlanner.Logic.Services.EmailService
         public async void SendEmail(string status,string email) 
         {
             MailAddress from = new MailAddress(_user.Email);
-            MailAddress to = new MailAddress("paul.crasmareanu@nagarro.com");
+            MailAddress to = new MailAddress(email);
             MailMessage message = new MailMessage(from, to);
             
             message.IsBodyHtml = true;
