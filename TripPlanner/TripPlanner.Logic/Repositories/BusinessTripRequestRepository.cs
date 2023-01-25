@@ -7,16 +7,19 @@ using TripPlanner.Logic.Abstractions;
 using TripPlanner.Logic.Common;
 using TripPlanner.Logic.DtoModels;
 using TripPlanner.Logic.Exceptions;
+using TripPlanner.Logic.Services.EmailService;
 
 namespace TripPlanner.Logic.Repositories
 {
     public class BusinessTripRequestRepository : IBusinessTripRequestRepository
     {
         private readonly TripPlannerContext _context;
+        private readonly IEmailService _emailService;
 
-        public BusinessTripRequestRepository(TripPlannerContext context)
+        public BusinessTripRequestRepository(TripPlannerContext context , IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         public async Task<bool> CreateTrip(BusinessTripRequest trip)
@@ -24,8 +27,11 @@ namespace TripPlanner.Logic.Repositories
            await _context.BusinessTripRequests.AddAsync(trip);
            var result = await _context.SaveChangesAsync();
 
-           if (result > 0)
+            if (result > 0)
+            {
+                _emailService.SendEmail(BusinessTripRequestStatus.Created, trip.Email);
                 return true;
+            }
             return false;
         }
 
@@ -53,7 +59,19 @@ namespace TripPlanner.Logic.Repositories
             currentBusinessTripRequest.Status = (updateStatusModel.Status);
             _context.BusinessTripRequests.Update(currentBusinessTripRequest);
 
-            return await _context.SaveChangesAsync() == 1;
+            if(await _context.SaveChangesAsync() == 1)
+            {
+                switch (updateStatusModel.Status)
+                {
+                    case RequestStatus.Accepted: _emailService.SendEmail(BusinessTripRequestStatus.Accepted, email); break;
+                    case RequestStatus.Rejected: _emailService.SendEmail(BusinessTripRequestStatus.Rejected, email); break;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public async Task<IEnumerable<IBusinessTrip>> GetTripsByCriteria(SearchCriteria searchCriteria, string email)

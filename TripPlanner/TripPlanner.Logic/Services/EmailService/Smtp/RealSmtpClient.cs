@@ -6,13 +6,13 @@ namespace TripPlanner.Logic.Services.EmailService.Smtp
 {
     public class RealSmtpClient : ISmtpClient
     {
-        private readonly EmailUser _user;
-        private readonly SmtpOptions _config;
-
-        public RealSmtpClient(IOptions<SmtpOptions> config ,IOptions<EmailUser>user)
+        private readonly EmailServiceConfiguration _config;
+        public string template;
+        public string email;
+        public string password;
+        public RealSmtpClient(IOptions<EmailServiceConfiguration> config )
         {
             _config = config.Value;
-            _user = user.Value;
         }
        
         public async Task SendMailAsync(MailMessage message )
@@ -21,9 +21,8 @@ namespace TripPlanner.Logic.Services.EmailService.Smtp
             {
                 Port = Convert.ToInt32(_config.Port),
                 EnableSsl = _config.EnableSsl,
-                Credentials = new NetworkCredential(_user.Email, _user.Password),
+                Credentials = new NetworkCredential(_config.Email, _config.Password),
                 Host = _config.Host,
-                
             };
             try
             {
