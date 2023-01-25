@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using TripPlanner.Context;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.Abstractions;
@@ -41,10 +45,11 @@ namespace TripPlanner.Logic.Repositories
             if (loginResult.Succeeded)
             {
                 string role = GetRole(loginUser.Email).Result;
-                string generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), loginUser, role);
-                if (generatedToken != null)
+                string generatedToken = _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), loginUser.Email, role);
+                string generatedRefreshToken = _tokenService.GenerateRefreshToken();
+                if (generatedToken != null && generatedRefreshToken!=null)
                 {
-                    TokenDto tokenDto = new() { Token = generatedToken };
+                    TokenDto tokenDto = new() { Token = generatedToken, RefreshToken = generatedRefreshToken};
                     return tokenDto;
                 }
                 else
@@ -88,5 +93,47 @@ namespace TripPlanner.Logic.Repositories
 
             return result;
         }
+
+        public ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
+                ValidateLifetime = false
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+
+            return principal;
+
+        }
+
+        public async Task<TokenDto> Refresh(TokenDto tokenModel)
+        {
+            string? accessToken = tokenModel.Token;
+            string? refreshToken = tokenModel.RefreshToken;
+
+            var principal = GetPrincipalFromExpiredToken(accessToken);
+
+            string username = principal.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);
+            string role = GetRole(username).Result;
+
+            var newAccessToken = //CreateToken(principal.Claims.ToList());
+                _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), username, role);
+            string generatedRefreshToken = _tokenService.GenerateRefreshToken();
+
+            var token = new TokenDto { Token = newAccessToken, RefreshToken = generatedRefreshToken };
+
+            return token;
+        }
+
+       
     }
 }
