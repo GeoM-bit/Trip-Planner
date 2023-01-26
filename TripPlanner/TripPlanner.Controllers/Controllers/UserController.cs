@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
 using TripPlanner.ApiModels.ApiModels;
 using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.Abstractions;
@@ -52,5 +50,13 @@ namespace TripPlanner.Controllers.Controllers
         {
             await _repository.Logout();
         }
+
+        [Route("refresh-token")]
+        [HttpPost]
+        public async Task<TokenDto> RefreshToken(TokenDto tokenModel)
+        {
+              return await _repository.Refresh(tokenModel);
+        }
+
     }
 }

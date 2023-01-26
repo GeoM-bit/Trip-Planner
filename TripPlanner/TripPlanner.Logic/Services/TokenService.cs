@@ -1,22 +1,24 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
-using TripPlanner.Logic.DtoModels;
 
 namespace TripPlanner.Logic.Services
 {
     public class TokenService : ITokenService
     {
         private const double EXPIRY_DURATION_MINUTES = 30;
+        private const double REFRESH_EXPIRY_DURATION_DAYS = 7;
 
-        public string BuildToken(string key, string issuer, LoginDto user, string role)
+        public string BuildToken(string key, string issuer, string email, string role)
         {
             var claims = new[] {
-            new Claim("name", user.Email),
+            new Claim("name", email),
             new Claim("role", role),
             new Claim("name-identifier",
-            Guid.NewGuid().ToString())
+            Guid.NewGuid().ToString()),
+            new Claim("refresh-token-exp",  DateTime.Now.AddDays(REFRESH_EXPIRY_DURATION_DAYS).ToString())
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
@@ -50,5 +52,15 @@ namespace TripPlanner.Logic.Services
             }
             return true;
         }
+
+        public string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+
+
     }
 }
