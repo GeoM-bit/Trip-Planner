@@ -115,12 +115,10 @@ namespace TripPlanner.Logic.Repositories
         public async Task<TokenDto> Refresh(TokenDto tokenModel)
         {
             string? accessToken = tokenModel.Token;
-            string? refreshToken = tokenModel.RefreshToken;
 
             var principal = GetPrincipalFromExpiredToken(accessToken);
 
             string username = principal.Identity.Name;
-            var user = await _userManager.FindByNameAsync(username);
             string role = GetRole(username).Result;
 
             var newAccessToken = 
