@@ -8,7 +8,6 @@ using TripPlanner.Logic.DtoModels;
 
 namespace TripPlanner.Controllers.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class BusinessTripRequestController : ControllerBase
@@ -22,6 +21,7 @@ namespace TripPlanner.Controllers.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<bool> Post(RegisterBusinessTripApiModel registerBusinessTripApiModel)
         {
