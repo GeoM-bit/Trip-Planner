@@ -3,13 +3,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using TripPlanner.Logic.DtoModels;
 
 namespace TripPlanner.Logic.Services
 {
     public class TokenService : ITokenService
     {
-        private const double EXPIRY_DURATION_MINUTES = 2;
+        private const double EXPIRY_DURATION_MINUTES = 30;
         private const double REFRESH_EXPIRY_DURATION_DAYS = 7;
 
         public string BuildToken(string key, string issuer, string email, string role)
