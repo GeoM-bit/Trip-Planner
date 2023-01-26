@@ -121,7 +121,7 @@ namespace TripPlanner.Logic.Repositories
 
             string username = principal.Identity.Name;
             var user = await _userManager.FindByNameAsync(username);
-            string role = GetRole(username).Result;S
+            string role = GetRole(username).Result;
 
             var newAccessToken = 
                 _tokenService.BuildToken(_config["Jwt:Key"].ToString(), _config["Jwt:Issuer"].ToString(), username, role);
