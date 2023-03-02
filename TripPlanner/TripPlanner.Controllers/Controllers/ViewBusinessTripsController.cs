@@ -40,9 +40,8 @@ namespace TripPlanner.Controllers.Controllers
         {
             var email = User.Identity.Name ?? throw new IdentityUserNameNotFoundException("No username was found!");
             var updateStatusModel = _mapper.Map<UpdateStatusModel>(updateStatusApiModel);
-            var result = await _repository.UpdateStatus(id, updateStatusModel, email);
-            
-            return result;
+
+            return  await _repository.UpdateStatus(id, updateStatusModel, email);
         }
     }
 }

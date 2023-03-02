@@ -15,8 +15,8 @@ namespace TripPlanner.Controllers.Controllers
     {
         private readonly IBusinessTripRequestRepository _repository;
         private readonly IMapper _mapper;
-
-        public BusinessTripRequestController(IBusinessTripRequestRepository repository, IMapper mapper)
+        
+        public BusinessTripRequestController(IBusinessTripRequestRepository repository, IMapper mapper )
         {
             _repository = repository;
             _mapper = mapper;
@@ -29,6 +29,7 @@ namespace TripPlanner.Controllers.Controllers
             var businessTripRequest = _mapper.Map<BusinessTripRequest>(registerBusinessTripDto);
 
             return await _repository.CreateTrip(businessTripRequest);
+          
         }
     }
 }

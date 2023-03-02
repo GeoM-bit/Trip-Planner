@@ -7,4 +7,10 @@
 		Rejected,
 		Cancelled,
 	}
+	public enum BusinessTripRequestStatus
+    {
+		Created,
+		Accepted,
+		Rejected
+    }
 }
