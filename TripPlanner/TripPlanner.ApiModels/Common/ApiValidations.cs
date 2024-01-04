@@ -11,7 +11,7 @@ namespace TripPlanner.ApiModels.ApiValidations
         {
             if (email != null)
             {
-                if (!Regex.Match(email, "^[a-zA-Z]+\\.[a-zA-Z]+@nagarro.com$").Success)
+                if (!Regex.Match(email, "^[a-zA-Z]+\\.[a-zA-Z]+@yahoo.com$").Success)
                 {
                     return new ValidationResult(errorMessage: "Invalid email.", memberNames: new[] { "Email" });
                 }
@@ -69,7 +69,7 @@ namespace TripPlanner.ApiModels.ApiValidations
             return ValidationResult.Success;
         }
 
-        public static ValidationResult ValidateRequired(string fieldValue, string fieldName)
+        public static ValidationResult ValidateRequired(string? fieldValue, string fieldName)
         {
             if(fieldValue==null)
             {
@@ -79,7 +79,7 @@ namespace TripPlanner.ApiModels.ApiValidations
             return ValidationResult.Success;
         }
 
-        public static ValidationResult ValidateDateRequired(DateTimeOffset fieldValue, string fieldName)
+        public static ValidationResult ValidateDateRequired(DateTimeOffset? fieldValue, string fieldName)
         {
             if (fieldValue == null)
             {

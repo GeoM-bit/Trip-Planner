@@ -23,13 +23,32 @@ namespace TripPlanner.Controllers.Controllers
 
         [Authorize(Roles = "User")]
         [HttpPost]
-        public async Task<bool> Post(RegisterBusinessTripApiModel registerBusinessTripApiModel)
+        public async Task<IActionResult> Post(RegisterBusinessTripApiModel registerBusinessTripApiModel)
         {
-            var registerBusinessTripDto = _mapper.Map<RegisterBusinessTripDto>(registerBusinessTripApiModel);
-            var businessTripRequest = _mapper.Map<BusinessTripRequest>(registerBusinessTripDto);
+            try
+            {
+                var registerBusinessTripDto = _mapper.Map<RegisterBusinessTripDto>(registerBusinessTripApiModel);
+                var businessTripRequest = _mapper.Map<BusinessTripRequest>(registerBusinessTripDto);
 
-            return await _repository.CreateTrip(businessTripRequest);
-          
+                var result = await _repository.CreateTrip(businessTripRequest);
+
+                if (result)
+                {
+                    return Ok(true);
+                }
+                else
+                {
+                    return BadRequest("Invalid data");
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error: " + ex.Message);
+            }
         }
     }
 }
