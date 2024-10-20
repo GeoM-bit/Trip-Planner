@@ -1,4 +1,5 @@
-﻿using TripPlanner.DatabaseModels.Models;
+﻿using System.Security.Claims;
+using TripPlanner.DatabaseModels.Models;
 using TripPlanner.Logic.DtoModels;
 
 namespace TripPlanner.Logic.Abstractions
@@ -9,5 +10,7 @@ namespace TripPlanner.Logic.Abstractions
         Task<TokenDto> Login(LoginDto loginUser);
         Task Logout();
         Task<string> GetRole(string email);
+        ClaimsPrincipal? GetPrincipalFromExpiredToken(string? token);
+        Task<TokenDto> Refresh(TokenDto tokenModel);
     }
 }

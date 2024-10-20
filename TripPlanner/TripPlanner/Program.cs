@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -119,12 +118,17 @@ app.UseSession();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
+app.UseCors("TripPlanner-UI");
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseCors("TripPlanner-UI");
-
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();
